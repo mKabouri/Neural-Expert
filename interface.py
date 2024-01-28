@@ -45,15 +45,21 @@ class GUI:
         clear_button = tk.Button(self.master, text="Clear", command=self.clear_inputs)
         clear_button.grid(row=row_offset, column=1)
 
-        self.output_area = scrolledtext.ScrolledText(self.master, wrap=tk.WORD, height=10, state=tk.DISABLED)
-        self.output_area.grid(row=row_offset+1, column=0, columnspan=2, sticky='we')
+        self.recommendation_area = scrolledtext.ScrolledText(self.master, wrap=tk.WORD, height=10, state=tk.DISABLED)
+        self.recommendation_area.grid(row=row_offset+1, column=0, columnspan=2, sticky='we')
+
+        self.explanation_area = scrolledtext.ScrolledText(self.master, wrap=tk.WORD, height=10, state=tk.DISABLED)
+        self.explanation_area.grid(row=row_offset+2, column=0, columnspan=2, sticky='we')
 
     def clear_inputs(self):
         for entry in self.entries.values():
             entry.delete(0, tk.END)
-        self.output_area.configure(state=tk.NORMAL)
-        self.output_area.delete('1.0', tk.END)
-        self.output_area.configure(state=tk.DISABLED)
+        self.recommendation_area.configure(state=tk.NORMAL)
+        self.recommendation_area.delete('1.0', tk.END)
+        self.recommendation_area.configure(state=tk.DISABLED)
+        self.explanation_area.configure(state=tk.NORMAL)
+        self.explanation_area.delete('1.0', tk.END)
+        self.explanation_area.configure(state=tk.DISABLED)
 
     def process_input(self):
         self.kb.facts.clear()  # Clear previous facts
@@ -66,8 +72,17 @@ class GUI:
         self.display_recommendations()
 
     def display_recommendations(self):
-        self.output_area.configure(state=tk.NORMAL)
-        self.output_area.delete('1.0', tk.END)
-        recommendations = "\n".join([f"- {fact[3:]}" for fact in self.kb.facts if fact.startswith("NN:")])
-        self.output_area.insert(tk.INSERT, recommendations)
-        self.output_area.configure(state=tk.DISABLED)
+        self.recommendation_area.configure(state=tk.NORMAL)
+        self.recommendation_area.delete('1.0', tk.END)
+        self.explanation_area.configure(state=tk.NORMAL)
+        self.explanation_area.delete('1.0', tk.END)
+
+        for fact in self.kb.facts:
+            if fact.startswith("NN:"):
+                recommendation = f"- {fact[3:]}\n"
+                self.recommendation_area.insert(tk.INSERT, recommendation)
+                explanation = self.kb.explain_recommendation(fact) + "\n-----------------------------------\n"
+                self.explanation_area.insert(tk.INSERT, explanation)
+
+        self.recommendation_area.configure(state=tk.DISABLED)
+        self.explanation_area.configure(state=tk.DISABLED)

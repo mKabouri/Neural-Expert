@@ -194,21 +194,39 @@ class KB():
                 print(self.explain_recommendation(fact))
                 print("-----------------------------------")
 
+
     def ask_user(self):
         print("Please answer the following questions:")
         questions = {
-            "data_size": "What is the size of your dataset (small: <10k samples, medium: 10k-1M samples, large: >1M samples, very_large: >10M samples)?\n>> ",
-            "data_type": "What type of data are you working with (image, text, tabular, audio, video, graph, multi-modal)? If your type isn't listed, please specify.\n>> ",
-            "task_type": "What is your specific task type (classification, regression, object_detection, segmentation, time_series, nlp, translation, sentiment_analysis, speech_recognition, music_generation, style_transfer, generative_tasks, self_supervised_learning, pretext_task)? If your task isn't listed, please specify.\n>> ",
-            "pretext_task": "If you selected 'pretext_task' for task type, please specify the task (image_rotation, word_ordering, audio_segment_prediction, etc.). Otherwise, type 'none'.\n>> ",
-            "inference_speed": "Do you need fast real-time inference (yes, no)? Examples include real-time video processing or instant response applications.\n>> ",
-            "computational_resource": "Are you limited by computational resources (yes, no)? Consider whether you're using a personal device or a high-performance computing environment.\n>> "
+            "data_size": "What is the size of your dataset?",
+            "data_type": "What type of data are you working with?",
+            "task_type": "What is your specific task type?",
+            "pretext_task": "If you are working on a pretext task, please specify the task. Otherwise, type 'none'.",
+            "inference_speed": "Do you need fast real-time inference?",
+            "computational_resource": "Are you limited by computational resources?"
         }
 
+        details_question = "Would you like more details about this question? (yes/no): "
+
         for char, question in questions.items():
-            response = input(question + " ").strip().lower()
+            print(question)
+            if input(details_question + "\n>> ").strip().lower() == 'yes':
+                self.provide_details(char)
+
+            response = input("Your answer:\n>> ").strip().lower()
             if response and response != 'none':
                 self.addFact(f"{char}:{response}")
+
+    def provide_details(self, char):
+        details = {
+            "data_size": "Dataset sizes are categorized as small (less than 10,000 samples), medium (10,000 to 1 million samples), large (more than 1 million samples), or very large (more than 10 million samples).",
+            "data_type": "Data types include image, text, tabular, audio, video, graph, or multi-modal. If your data type isn't listed, please specify.",
+            "task_type": "Task types include classification, regression, object detection, segmentation, time series analysis, NLP, translation, sentiment analysis, speech recognition, music generation, style transfer, generative tasks, self-supervised learning, etc.",
+            "pretext_task": "Pretext tasks are specific tasks used in self-supervised learning, such as image rotation, word ordering, audio segment prediction, etc.",
+            "inference_speed": "Real-time inference is important for applications requiring immediate response, such as video processing or interactive systems.",
+            "computational_resource": "Consider whether you have access to high-performance computing resources or are using more limited computational capabilities."
+        }
+        print(details[char])
 
     def define_rules(self):
         self.addRule(Rule("data_size:large & data_type:image => NN:Use Deep CNNs (e.g. Resnets, VGGs...)"))
@@ -301,102 +319,3 @@ class KB():
             if input("Would you like to start a new session? (yes/no): ").lower() != 'yes':
                 break
         print("Thank you for using the recommender system!")
-
-class GUI:
-    def __init__(self, master, kb):
-        self.master = master
-        self.kb = kb
-        master.title("Neural Network Recommendation Expert System")
-
-        self.create_widgets()
-
-    def create_widgets(self):
-        questions = {
-            "data_size": "Dataset size:",
-            "data_type": "Data type:",
-            "task_type": "Task type:",
-            "pretext_task": "Pretext task (if applicable):",
-            "inference_speed": "Need for fast real-time inference:",
-            "computational_resource": "Computational resource limitations:"
-        }
-
-        explanations = {
-            "data_size": "Small: <10k samples, Medium: 10k-1M samples, Large: >1M samples, Very Large: >10M samples.",
-            "data_type": "Types: image, text, tabular, audio, video, graph, multi-modal. Specify if not listed.",
-            "task_type": "Examples: classification, regression, object_detection, etc. Specify if not listed.",
-            "pretext_task": "Specify the pretext task for self-supervised learning, or type 'none'.",
-            "inference_speed": "Yes for applications like real-time video processing. No otherwise.",
-            "computational_resource": "Yes if using a personal device, no for high computing power!."
-        }
-
-        self.entries = {}
-        for i, (key, question) in enumerate(questions.items()):
-            label = tk.Label(self.master, text=question)
-            label.grid(row=2*i, column=0, sticky='w')
-            explanation = tk.Label(self.master, text=explanations[key], fg='gray')
-            explanation.grid(row=2*i+1, column=0, sticky='w')
-            entry = tk.Entry(self.master)
-            entry.grid(row=2*i, column=1, sticky='w')
-            self.entries[key] = entry
-
-        row_offset = 2 * len(questions)
-        submit_button = tk.Button(self.master, text="Submit", command=self.process_input)
-        submit_button.grid(row=row_offset, column=0)
-
-        clear_button = tk.Button(self.master, text="Clear", command=self.clear_inputs)
-        clear_button.grid(row=row_offset, column=1)
-
-        self.output_area = scrolledtext.ScrolledText(self.master, wrap=tk.WORD, height=10, state=tk.DISABLED)
-        self.output_area.grid(row=row_offset+1, column=0, columnspan=2, sticky='we')
-
-    def clear_inputs(self):
-        for entry in self.entries.values():
-            entry.delete(0, tk.END)
-        self.output_area.configure(state=tk.NORMAL)
-        self.output_area.delete('1.0', tk.END)
-        self.output_area.configure(state=tk.DISABLED)
-
-    def process_input(self):
-        self.kb.facts.clear()  # Clear previous facts
-        for key, entry in self.entries.items():
-            response = entry.get().strip().lower()
-            if response and response != 'none':
-                self.kb.addFact(f"{key}:{response}")
-        self.kb.simpleFC()
-        self.kb.recommendNN()
-        self.display_recommendations()
-
-    def display_recommendations(self):
-        self.output_area.configure(state=tk.NORMAL)
-        self.output_area.delete('1.0', tk.END)
-        recommendations = "\n".join([f"- {fact[3:]}" for fact in self.kb.facts if fact.startswith("NN:")])
-        self.output_area.insert(tk.INSERT, recommendations)
-        self.output_area.configure(state=tk.DISABLED)
-
-def launch_tkinter_interface():
-    print("Launching tkinter interface...")
-    root = tk.Tk()
-    kb = KB(verb=False)
-    kb.define_rules()
-    app = GUI(root, kb)
-    root.mainloop()
-
-def launch_terminal_interface():
-    print("Launching terminal interface...")
-    knowledge_base = KB()
-    knowledge_base.define_rules()
-    knowledge_base.start_interactive_session()
-
-def main():
-    parser = argparse.ArgumentParser(description="Expert System for Neural Network Recommendation")
-    parser.add_argument('--interface', choices=['tkinter', 'terminal'], default='terminal', help='Select the interface type (default: terminal)')
-    args = parser.parse_args()
-
-    if args.interface == 'tkinter':
-        launch_tkinter_interface()
-    else:
-        launch_terminal_interface()
-
-if __name__ == "__main__":
-    main()
-
