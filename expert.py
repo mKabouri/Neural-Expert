@@ -86,7 +86,7 @@ class KB():
     def refine_recommendations(self):
         # Example refinements based on combined facts
         if 'data_size:large' in self.facts and 'task_type:classification' in self.facts:
-            self.addFact("NN:Consider Using Distributed Training Techniques")
+            self.addFact("NN:Consider Using Distributed or Parallel Training Techniques")
 
         if 'data_type:image' in self.facts and 'inference_speed:yes' in self.facts:
             self.addFact("NN:Use Models Optimized for Inference Speed, like MobileNet or EfficientNet")
@@ -98,44 +98,40 @@ class KB():
             self.addFact("NN:Prioritize Efficient Models to Balance Performance and Resource Usage")
         
         if 'data_type:text' in self.facts and 'task_type:nlp' in self.facts and 'computational_resource:no' in self.facts:
-            self.addFact("NN:Consider DistilBERT for Efficient NLP")
+            self.addFact("NN:Consider DistilBERT for Efficient NLP (see HuggingFace)")
 
         if 'data_type:image' in self.facts and 'task_type:segmentation' in self.facts and 'computational_resource:no' in self.facts:
-            self.addFact("NN:Optimize Segmentation Models for Efficiency")
+            self.addFact("NN:Search for optimized Segmentation Models for Efficiency")
 
         if 'data_size:very_large' in self.facts and 'task_type:classification' in self.facts:
-            self.addFact("NN:Consider Parallel Processing and Model Sharding for Scalability")
+            self.addFact("NN:Consider Parallel Processing")
 
         if 'data_type:image' in self.facts and 'task_type:segmentation' in self.facts and 'computational_resource:yes' in self.facts:
-            self.addFact("NN:Explore Advanced Vision Transformers for Detailed Image Segmentation")
+            self.addFact("NN:Explore Advanced Vision Transformers for Detailed Image Segmentation (see DINO paper)")
 
         if 'data_type:text' in self.facts and 'task_type:sentiment_analysis' in self.facts:
             self.addFact("NN:Use Fine-tuned BERT or DistilBERT Models for Sentiment Analysis")
+
         if 'data_type:graph' in self.facts and 'task_type:node_classification' in self.facts:
             self.addFact("NN:Use GCN for Node Classification in Graphs")
 
         if 'data_type:graph' in self.facts and 'task_type:link_prediction' in self.facts:
             self.addFact("NN:Consider GraphSAGE or GAT for Link Prediction")
 
-        if 'data_type:graph' in self.facts and 'task_type:graph_embedding' in self.facts:
-            self.addFact("NN:Use VGAE for Graph Embedding Tasks")
-
         # Refinements for Self-Supervised Learning
         if 'task_type:self_supervised_learning' in self.facts:
             if 'data_type:image' in self.facts:
-                self.addFact("NN:Explore Contrastive Learning Methods for Images")
+                self.addFact("NN:Explore Contrastive Learning Methods for Images (See SimCLR paper)")
             elif 'data_type:text' in self.facts:
-                self.addFact("NN:Consider Masked Language Models for Text")
+                self.addFact("NN:Consider Masked Language Models for Text (Transformer-based)")
             elif 'data_type:audio' in self.facts:
-                self.addFact("NN:Use CPC for Audio Feature Learning")
+                self.addFact("NN:Explore Contrastive Learning Methods for Images (See COLA paper)")
             elif 'data_type:video' in self.facts:
                 self.addFact("NN:Investigate Video Frame Prediction Models")
-            elif 'data_type:graph' in self.facts:
-                self.addFact("NN:Use Graph Autoencoders for Node Embedding")
 
         # Refinements based on Pretext Tasks in Self-Supervised Learning
         if 'pretext_task:image_rotation' in self.facts:
-            self.addFact("NN:Use RotNet for Self-Supervised Learning by Image Rotation Prediction")
+            self.addFact("NN:Use RotNet for Self-Supervised Learning by Image Rotation Prediction, (See PIRL paper also)")
 
         if 'pretext_task:word_ordering' in self.facts:
             self.addFact("NN:Use Word Ordering Tasks for Textual Feature Extraction")
@@ -186,7 +182,7 @@ class KB():
 
     def recommendNN(self):
         self.refine_recommendations()
-        print("Recommended Neural Network Architectures and Parameters:")
+        print("Recommended Neural Network Architectures and Hints:")
         for fact in self.facts:
             if fact.startswith("NN:"):
                 print(f"- {fact[3:]}")
@@ -194,14 +190,14 @@ class KB():
                 print(self.explain_recommendation(fact))
                 print("-----------------------------------")
 
-
     def ask_user(self):
         print("Please answer the following questions:")
+
         questions = {
             "data_size": "What is the size of your dataset?",
             "data_type": "What type of data are you working with?",
             "task_type": "What is your specific task type?",
-            "pretext_task": "If you are working on a pretext task, please specify the task. Otherwise, type 'none'.",
+            "pretext_task": "If you are working on a pretext task, please specify the task. Otherwise, type 'none'",
             "inference_speed": "Do you need fast real-time inference?",
             "computational_resource": "Are you limited by computational resources?"
         }
@@ -224,14 +220,14 @@ class KB():
             "task_type": "Task types include classification, regression, object detection, segmentation, time series analysis, NLP, translation, sentiment analysis, speech recognition, music generation, style transfer, generative tasks, self-supervised learning, etc.",
             "pretext_task": "Pretext tasks are specific tasks used in self-supervised learning, such as image rotation, word ordering, audio segment prediction, etc.",
             "inference_speed": "Real-time inference is important for applications requiring immediate response, such as video processing or interactive systems.",
-            "computational_resource": "Consider whether you have access to high-performance computing resources or are using more limited computational capabilities."
+            "computational_resource": "Consider whether you have access to high computing resources or are using more limited computational capabilities."
         }
         print(details[char])
 
     def define_rules(self):
         self.addRule(Rule("data_size:large & data_type:image => NN:Use Deep CNNs (e.g. Resnets, VGGs...)"))
-        self.addRule(Rule("data_size:medium & data_type:image => NN:Use Standard CNN"))
-        self.addRule(Rule("data_size:small & data_type:image => NN:Use Lightweight CNN Models like MobileNet"))
+        self.addRule(Rule("data_size:medium & data_type:image => NN:Use Standard CNNs"))
+        self.addRule(Rule("data_size:small & data_type:image => NN:Use small CNN Models like MobileNet"))
 
         self.addRule(Rule("data_type:text & task_type:classification => NN:Use LSTM or GRU"))
         self.addRule(Rule("data_type:text & task_type:regression => NN:Use Bidirectional LSTM"))
@@ -249,8 +245,8 @@ class KB():
 
         self.addRule(Rule("data_type:image & task_type:object_detection => NN:Use Faster R-CNN or YOLO"))
         self.addRule(Rule("data_size:small & data_type:tabular & task_type:classification => NN:Use Compact Neural Networks"))
-        self.addRule(Rule("task_type:time_series => NN:Use RNN or 1D CNN"))
-        
+        self.addRule(Rule("task_type:time_series => NN:Use RNN or 1D CNN or ReservoirPy (INRIA software)"))
+
         self.addRule(Rule("data_type:image & task_type:segmentation => NN:Use U-Net or SegNet"))
         self.addRule(Rule("data_type:text & computational_resource:yes => NN:Use Larger Transformer Models like LLama2, GPT or Mistral7B"))
         self.addRule(Rule("inference_speed:no & task_type:nlp => NN:Use BERT or XLNet for NLP Tasks"))
@@ -258,16 +254,16 @@ class KB():
         self.addRule(Rule("data_type:image & task_type:classification => NN:Consider Vision Transformer (ViT) for High-Resolution Images"))
         self.addRule(Rule("data_type:image & task_type:object_detection => NN:Use DETR (Transformer-based) for Object Detection"))
 
-        self.addRule(Rule("data_type:text & task_type:nlp & data_size:large => NN:Use GPT-3 for Generative NLP Tasks"))
-        self.addRule(Rule("data_type:text & task_type:classification & computational_resource:yes => NN:Use BERT or RoBERTa for Text Classification"))
+        self.addRule(Rule("data_type:text & task_type:nlp & data_size:large => NN:Use GPT models for Generative NLP Tasks"))
+        self.addRule(Rule("data_type:text & task_type:classification & computational_resource:yes => NN:Use BERT for Text Classification"))
 
-        self.addRule(Rule("data_type:image & task_type:segmentation => NN:Consider Transformer Models like SETR for Image Segmentation"))
-        self.addRule(Rule("data_type:text & task_type:translation => NN:Use Transformer Models like T5 for Translation Tasks"))
+        self.addRule(Rule("data_type:image & task_type:segmentation => NN:Consider Transformer Models like SETR (Segmentation Transformer) for Image Segmentation"))
+        self.addRule(Rule("data_type:text & task_type:translation => NN:Use Transformer Models like T5 (Text-to-Text Transfer Transformer) for Translation Tasks"))
         
-        self.addRule(Rule("task_type:object_detection & data_type:image => NN:Use YOLO or SSD for Object Detection"))
+        self.addRule(Rule("task_type:object_detection & data_type:image => NN:Use YOLO or Co-DETR for Object Detection"))
         self.addRule(Rule("task_type:segmentation & data_type:image => NN:Consider U-Net for Image Segmentation"))
         self.addRule(Rule("task_type:time_series => NN:Consider LSTM or Temporal Convolutional Networks"))
-        self.addRule(Rule("task_type:nlp => NN:Use Transformer-based Models like BERT or GPT-3 for NLP Tasks"))
+        self.addRule(Rule("task_type:nlp => NN:Use Transformer-based Models like BERT or GPT for NLP Tasks"))
         self.addRule(Rule("task_type:translation => NN:Use Sequence-to-Sequence Models like Transformer for Language Translation"))
         self.addRule(Rule("task_type:sentiment_analysis & data_type:text => NN:Use Fine-tuned BERT or DistilBERT for Sentiment Analysis"))
 
@@ -309,8 +305,28 @@ class KB():
         self.addRule(Rule("data_type:audio & task_type:pretext_task & pretext_task:audio_segment_prediction => NN:Use Segment Prediction Models for Audio Representation in Self-Supervised Learning"))
         self.addRule(Rule("data_type:tabular & task_type:self_supervised_learning => NN:Use Denoising Autoencoders for Feature Extraction from Tabular Data"))
 
+    def get_data_type_task_mapping(self):
+        mapping = {}
+        for rule in self.rules:
+            for condition in rule.pre:
+                if condition.startswith("data_type:"):
+                    data_type = condition.split(":", 1)[1]
+                    task_type = next((c.split(":", 1)[1] for c in rule.pre if c.startswith("task_type:")), None)
+                    if task_type:
+                        mapping.setdefault(data_type, set()).add(task_type)
+        return mapping
+
     def start_interactive_session(self):
         print("Welcome to the Neural Network Architecture Recommender System")
+
+        # Print all data types and corresponding task types
+        mapping = self.get_data_type_task_mapping()
+        for data_type, task_types in mapping.items():
+            print(f"data_type: {data_type}")
+            for task_type in task_types:
+                print(f"  - task_type: {task_type}")
+            print()
+
         while True:
             self.ask_user()
             self.simpleFC()
