@@ -1,5 +1,9 @@
 # Neural-Expert
 
+## Author:
+
+KABOURI Mohamed Yassine <mkabouri@bordeaux-inp.fr>
+
 ## Motivation:
 
 This project aims to provide recommendations for selecting appropriate neural network architectures based on various input parameters such as dataset size, data type, task type, and computational resources. It leverages an expert system with predefined rules to suggest neural network models that are suitable for specific scenarios.
@@ -33,6 +37,14 @@ python3 .\run.py --interface tkinter
 - The GUI interface offers a user-friendly way to input parameters and receive recommendations.
 - Users will provide information about their datasets and tasks using a graphical form.
 - Recommendations for neural network architectures will be displayed within the GUI.
+
+#### GUI demo:
+This how the tkinter interface looks like:
+
+| Before                     | After                      |
+|----------------------------|----------------------------|
+| ![Image 1](./tkinter1.png) | ![Image 2](./tkinter2.png) |
+
 
 ## References:
 

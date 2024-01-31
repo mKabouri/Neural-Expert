@@ -25,7 +25,7 @@ class GUI:
             "task_type": "Examples: classification, regression, object_detection, etc. Specify if not listed.",
             "pretext_task": "Specify the pretext task for self-supervised learning, or type 'none'.",
             "inference_speed": "Yes for applications like real-time video processing. No otherwise.",
-            "computational_resource": "Yes if using a personal device, no for high-performance computing."
+            "computational_resource": "Yes if using a personal device, no for high computing resources."
         }
 
         self.entries = {}
