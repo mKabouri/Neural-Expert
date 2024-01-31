@@ -1,9 +1,5 @@
 # Neural-Expert
 
-## Author:
-
-KABOURI Mohamed Yassine <mkabouri@bordeaux-inp.fr>
-
 ## Motivation:
 
 This project aims to provide recommendations for selecting appropriate neural network architectures based on various input parameters such as dataset size, data type, task type, and computational resources. It leverages an expert system with predefined rules to suggest neural network models that are suitable for specific scenarios.
