@@ -49,8 +49,8 @@ This how the tkinter interface looks like:
 ## References:
 
 - Main reference: [Papers with Code](https://paperswithcode.com/)
-- [Expert System Paper](https://arxiv.org/pdf/1812.08434.pdf)
-- [Another Reference](https://arxiv.org/abs/2304.12210)
+- https://arxiv.org/pdf/1812.08434.pdf
+- https://arxiv.org/abs/2304.12210
 
 ## Contribution:
 
